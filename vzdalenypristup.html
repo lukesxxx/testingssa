@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Vítkovické železniční opravny - Měření kol</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f7f7f7; }
+    .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); font-size: 12px; display: none; }
+    h1, h2 { text-align: center; margin-bottom: 10px; }
+    .form-group { margin-bottom: 8px; }
+    label { display: block; font-weight: bold; margin-bottom: 3px; }
+    input, select, textarea { width: 100%; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+    table, th, td { border: 1px solid #ddd; }
+    th { background-color: #004080; color: white; padding: 6px; text-align: center; }
+    td { padding: 4px; text-align: center; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    .failed { color: red; font-weight: bold; }
+    .ok { color: green; font-weight: bold; }
+    .buttons { margin-top: 10px; text-align: center; }
+    button { background-color: #004080; color: white; border: none; padding: 8px 16px; margin: 5px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+    button:hover { background-color: #0066cc; }
+    input[type="file"] { margin-top: 5px; }
+    #loginBox { max-width: 400px; margin: 100px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="loginBox">
+    <h2>Přihlášení</h2>
+    <input type="password" id="password" placeholder="Zadejte heslo">
+    <button onclick="checkPassword()">Přihlásit</button>
+    <p id="loginMsg" style="color:red; margin-top:5px;"></p>
+  </div>
+
+<body>
+  <div class="container" id="report">
+    <!-- Logo -->
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACoCAMAAABt9SM9AAAA3lBMVEX///8AcrsAAAAGBwkAargAcbsAb7oAZ7cAabiryuQAZbZzc3MAbbmGh4e60+mys7OYvN50oc8xhcTo7vbc5vI8icSWlpf4+PjW5vJ+f3/s7O3c3d1rbGzz8/POzs55eXlERUUAeL+foKBQUVKpyONQjca8vLzFxcU9PT4jJCULDQ/w9/tZWlrLy8sAXbPJ3O2rq6wxMTMZGhuNjo6ErtZ8qtRXV1iev98qfL8EPWVdmMw3NzgoKSljY2NgnM3D2Otvg5SkvdMAR3sAK0gDXJcBZ6kFExwEITdlbnQxLSZ96nc5AAAOYElEQVR4nO1aaVsiSRIuyjoAi8OLG4QSQUQEEZVW0dmZ6Z3d//+HNo7MrAO6Bel+pp/ZeD9oUZUZlflmXBmVliUQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgE/0BUO7P66mpu26PuqlBq7i3uR4zp52DfobVLN3YS163hZ4XV3F4mU9tzRD8Hp5lez53uJaJ5iPQcHERU0fXBffsz0k4CN8ic7DWgn4VxxvMyp/tIaKyQGKTo5fw+nM3CQmtkq1uFTwyo5wbL8T4D+mmoLj1vudcyhqxHr5VO/O6kfsD3B7vKWzrO2T7j+Yk4c4LjfRxWu0uUtIipRlOBJA67pF2t3QQ+nJ297TGen4nF8X5DaxIfNyr2hdplKSWbvCKTd5/yXP88TIgrY2kz4AZhG4u8xwbXjbWOxRygHwsr73Tj3Zr24V8fvHw/l0S/xr36Oe6ADaGlCprj3OIZVLKsJdLTXDGSz81zVo3+Ry5RdXzSwXdMz5UP75MUGE0xOZr+Z1xqB6l4iahIa5ZuYq+xtcg7jpNdRjccxG3OOsIHPgwv7ySRL4M7y8KFR+1P8nidZ+928uw7QeB5npN3n+hO8Rbl56NJHfvY/MEqo9xb7aRrl3kH+3mOf8w8n2LHfC4apHNbVL0j3H4iIDaQiMf4napCvNEcGo3SXcf5DCBvkqliFn66btU68uC/p27E4QBZxy5c9KjDEtplPGa7nPdMMzfbI6H0I5vT8k98et+pVXbwvyLrIR9EHfMLIgsbOtTvnccI77XOohcg/E+QBR7JXn3YqorNbtJ3L3GYwUL/fKOfR9a2ZB3hnN2AJv3mJxq6/jvcXGCD4FnLJ468YytB1mXyHf5Dgqyxg29zyKXvT9Y5eu/W4Uc4f8R2s1RnViVth9WsqxTNkIXm4PDCe9oMDVk5XnSynAfiyg2yvu94Zi40adfXdniMT5x+gqxnh1pHHdH6IrKoC/JryAo0djfDDnlzewtQs1RIrNLr/VqaOk1WrYx4IIV7o+tpRNYJLXqe3NOUePP8h/daLXdMpJN1UlukB8HUOeM4WX3V8Qg6loOALHEckbWgIWXGEVm9p7LGzonpiwp922Et3XqI2+Ez/nCeYmQxapEHsayILHJY2Qe6tyR6emr4T8QA+qo+GZ5Kb9kK36w4WR57Pe5YPQ7crPsUkVXME71KhZAs93hXhiIM7I/UyvDEupWqQxAPyltX8zjj7PgbZPVTZJHDci6jFm7WhD0iA+c1JiNT8ZDY9adxspRT1B2rQY9ew2QVx+QAfJ17EFmx2L0rrsBt/zYofQuDwf21pqr+r9+h8XlKAKkEu50cLTzN/mOylrTo3pJD7sLopEKGeAE23jzTt0Zq0jNkIlkUUiKltZQOKbLO8CkFwhhZ4xONHblqwvT/yHw7OWu2lK+y79tWz8VkK7WresKlDciWLsmsiluR5fZc/OuoAVNXPzYOYi8LAfHdN3bIjNLUDVk9igpr42bvtgxMICSwg9dpVtbfmiZGHab/Z/CtHS9tC4kqjILPgfsFmpeSbcbsdM1Vlu5+rFkER6fqyyj1Yrw7uotHtk3uKaO0LUZWPubSYjg1eUjcR6VSB2+t2/cxt+1rGEB507PZXFF1RxuhPrz/64Zci/UJZt3PRr5+S7JYIwHL1LSsaVbbJaVaeDWNdCxF1rOVRkRWxomsbT+y0Aq/YLBdqxq2KzpZuJjQjRNyGP+GDqmW5GIxEaWhqGx+S7IyakfyPc3iFx+rwKvcU4Is93uaBQZvHAeT5WmsW+93MUMrxP4pt9Woa6paOvpRJMqgHXZSQjBbAmJoK6Kyv23Icqlflj0yqWc+7bMoiecpgh1msJvyM5HPcr/ts2ANsUu0AWCyLg12IwuydzuTFAhornRFuW62zgsO0X+uOy1e8eyUMqLs07ZkuZkyscuRnG0t5g2YGbKgPtshCUENTpBF0TDaPFq1OFnOA+XvWS13vzwLtjA220TeTCXy6pUoXZ8qtUanla4xU0T3jkg5HKUcH5MF6RJtLJ1nIyPa1qjEm+c1Rv1wzx5I+aYpsooUVTzdEdKyKM8C/3bqY19/GiPr03nWyLb/Ug5E2UNppKgaxbeBY5ddo4vJw1rNlLdflILrML1F6gBSObw9GQLdnkqTypTB62TyiDYx2NjMNMrge+SGVMcxOAvHKesMHvqT+rpBtN35vGaB+vyhyCJ7CLWrukrW3J91DSQAsrppKU9m289OZhuyyJsXowoP7w1d/6hYm/aPfTMixNR4a2OoEVk5vTeEjouAGI3vDdlPxTfSPbM1XOyWlcLU/2MGAu5gyFQ9pnw4b1aRq7f/QiaRlsJbkkwmFs+2I0vpDEWXhXLJWT/LxQMvqqAsdfj09fRiVYc3ersbOL5P/jxVdTihTbmzMGR9uuoAZNWneTWUPGgtJgyH6c/QJ3pl3Qwa7loJ0CieYwpbW5LFfjygsPSmV0Rpuh+lM2W1Gl6ysLW5npVP1rN0Haho7VvPor3egxoK1T4u7gbNTgzDqvJJpN816xpMdE3Mu59++7ZksfUxyeV8YBIw11/GZqJXy+yIk5XSRaxjwDvBGFm8lC7uAfYky8YaqdZyzI6rqZoD7Js1mRSCN5VLLcvNIvKR7zzKw2+z96rdwq9bQ9YSHvqenij2vCUWTt6cbAC5IlhUL7anBpz59IIonypjN1ODP32GjgF1POPc4ZTeyGRVXeydz1T3rMFfkVHVtJllF5TUx8pXV7qGjYsGXLY31B0A0yLhNHVD/xrTL+NO3+MPuWdRN1w8Pz8fPaVPSJxyo8gwa/Q79nVHdTw1v2NvPNWjey8msdvXnRXvXsqaLUxjwrhiNaxxRukdxd8OdKjs9Ip/Dio2V/O0Mbugq1alrnE+iWUN5CJD6JA+VrN6gSi699kkUOmhdbfhw0l19AOE/whAqkDVl3FWqU+Q3i89aSN0aKOBqpj+Ml21Hz9zcmQN9/ZqTTZgPl//uPu3AF3QBV4UNSf5pGc90XmFx9EL2q+lWdakdfhDRlPfdBascvjLnIe7gNnTwh3pkOcnnOtSB1sOswNofp+UMMDaM/yZNayhrkVb7dmsaR4ThuZpqWFNSiVioDmbVa2m+lEdhBU6adielTgpLsH/amkQGWG7VLlXglnaAMfe4UvdDIRP6MUzVtMG/I6LbMxKXHTqlGa72XcJZh/SVU+7rfhGc2EofDLcpl5wF33r16cG7/CgiapNvKh7F1ZXNxxYh+pQTogRpMLHAiomVWnafAeymHv8XB7qV6kmKyRBS6vQQQy+z63wkhtzR3hcioks4Ijxum3b17spLaZV13RVSzongk42dQUHa4XplJRGPacy10odhruKkdVV926sR91wSJUhfD6LyMJDh1c3NGV8ywuPrRInC5t0Ucq8isvGckFORV9STjPEqyFxwUOFNNoMnMhq2uR6WvZaZe4jFIxqLfSuQVcvrbGrswZVG3zcUM0iVEhVVvar+h0nqxtvGCJt/BG8ESdrYPPJlJV91cZMDyNGiixo0m3TiFGHLmjy8J4uCkAe7vhbyo39ekd5MywdGkHHtutWTGSBRjvg+zuigQvBxq13NV5WJXNR1sDFhOGmsyH8wJ5b25AFI7xuc80R20ZkXalBVDusv6gcKbK6epyPeMFkwb9XFIAP+B+0r7CuTmxyr+fIWUwkxm3wDcDtwa5coUnrDUwU+Xjb8qSNUO2Pq9fQdNNxSdB4WsSVfV3A9CxMkDWieyUlgVT/3H6to9UYskBCFFChc4VWMEFW1GSAirGmWe0X0iyU1iBXhnt+0qW7SKQiC37Cw8nuZFkHJinPGXYeLPWhgLhTLv9G5xlpdNWEVsaZJ3wW4ZAlcCw9Bz8JujQoabLU9AxZwxJKSZAVNWniLQg1o/lc+6w5XZ4TQ1e4i0MDqODKDOgznhLZtdRZ4ns7vjo7AE+GKIVJ2J3OGlxVRMJPjJuSRnwzqyZoFp63ad0nyJrTPUx9Q1vZJJKF9l+IkRWltU3UHCC+ME+RpZpMUPhFFA0ryr8f0mTwxSVS4AbeWpG+kcgWiWQho10joUaIbFE6GO0DvbGpNfg5RQm02qS5HROCP/BZTeMdz7HHAKuy2meNVEy29Mzwi+ZBwme96ibkhcBZQQo3VM5qVuIIh4SsWq0VpyZAaIOvYiILaqjrhabtcIhLQ5ObmgrDsVYy9fW7jlyFGzprh5Uma7BG1oGJ1UQWvtaQVVFmEdr3Ve5MASxOVqjCFwZOHQ0JFVQeinDgodQplwPUJ2j5yO+MidyXLNzxHfBITBaqq2l8DqN9gS3uN/e1R4ctWM0hmmELUadUhu+hGeK9e0yT6HI1UGTRkUOdZ93hEfzwBsOqYjpMaRY2eQnDFS9Okqw2plPXFF5vMJzc8IEDyuxiixf+AM1C7QUuRrgGptytvRfufkqU9m0uzegUHUanHTxl8IQQ/bhy+trLwM1DTok4r2ayqioSvDaMWl6kklLdhHSlG+1RmawS+rSRMvQGZSZW3Vaj1iIfteO7obT3k6jog/Cm3q4cVhmyqLvkye9UzwKj3rFm6hKmWOd7E/M4tELdcGKVCjzkQaEOO8p6nSY4qV/drdAZNOp1sut2vT7AP9HuengOTfgTXVgwazeoF5B6kNys67sVlIzD4M/EILLDIguDdPdPoDOnb9DdQZmdFSXvrnfZDl+JqqtfpE7ya6BaUJ/s//ry59evyNfXr79/ubN547XJtf9fo4E7VX1o8vpahRV1kE2QRrsyZ4KiY6RggLNfpvr2q6EZrua2wag1E1/1fTSaE6x/dppifQKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBIK/Cf8DBO0+DykkhCsAAAAASUVORK5CYII=" alt="Logo VŽO" class="logo">
+
+    <h1>Vítkovické železniční opravny</h1>
+    <h2>Formulář měření</h2>
+    <div class="form-group">
+      <label for="project">Název projektu:</label>
+      <input type="text" id="project" name="project">
+    </div>
+    <div class="form-group">
+      <label for="vehicle">Číslo vozidla:</label>
+      <input type="text" id="vehicle" name="vehicle">
+    </div>
+    <div class="form-group">
+      <label for="operator">Jméno operátora:</label>
+      <select id="operator" name="operator">
+        <option value="">-- Vyberte operátora --</option>
+        <option value="Radek Klepacz">Radek Klepacz</option>
+        <option value="Marek Hornak">Marek Hornak</option>
+        <option value="Lukas Chamrad">Lukas Chamrad</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="remarks">Poznámky:</label>
+      <textarea id="remarks" name="remarks" rows="2"></textarea>
+    </div>
+
+    <h2>Výsledky měření kol</h2>
+    <input type="file" id="csvFile" accept=".csv">
+    <table id="resultsTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+    <div class="buttons">
+      <button onclick="downloadPDF()">Uložit jako PDF</button>
+    </div>
+  </div>
+
+  <script>
+    const PASSWORD = '1234';
+    function checkPassword() {
+      const pwd = document.getElementById('password').value;
+      if(pwd === PASSWORD) {
+        document.getElementById('loginBox').style.display = 'none';
+        document.querySelector('.container').style.display = 'block';
+      } else {
+        document.getElementById('loginMsg').innerText = 'Špatné heslo.';
+      }
+    }
+
+    const headerTranslations = {
+      'axle number':'Číslo nápravy',
+      'axle id':'ID nápravy',
+      'average of left wheel diameter [mm]':'Průměr levého kola [mm]',
+      'average of right wheel diameter [mm]':'Průměr pravého kola [mm]',
+      'difference [mm]':'Rozdíl [mm]',
+      'passable':'Splňuje'
+    };
+
+    document.getElementById('csvFile').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e){
+        let text = e.target.result;
+        text = text.replace(/"/g,''); // odstranění uvozovek
+        const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+        let tbody = document.querySelector('#resultsTable tbody');
+        let thead = document.querySelector('#resultsTable thead');
+        tbody.innerHTML = '';
+        thead.innerHTML = '';
+
+        // formulář
+        lines.forEach(line => {
+          const cols = line.split(';');
+          if(line.startsWith('Project name')) document.getElementById('project').value = cols[1]||'';
+          if(line.startsWith('Vehicle Number')) document.getElementById('vehicle').value = cols[1]||'';
+          if(line.startsWith('Operator name')) document.getElementById('operator').value = cols[1]||'';
+          if(line.startsWith('Remarks')) document.getElementById('remarks').value = cols[1]||'';
+        });
+
+        // hlavička tabulky
+        const headerLineIndex = lines.findIndex(l => l.toLowerCase().startsWith('axle number'));
+        if(headerLineIndex !== -1){
+          const headers = lines[headerLineIndex].split(';').map(h=>headerTranslations[h.trim().toLowerCase()]||h);
+          let tr = document.createElement('tr');
+          headers.forEach(h=>{ let th=document.createElement('th'); th.innerText=h; tr.appendChild(th); });
+          thead.appendChild(tr);
+
+          // data
+          for(let i=headerLineIndex+1;i<lines.length;i++){
+            const row = lines[i].split(';');
+            if(row.length<headers.length) continue;
+            let tr = document.createElement('tr');
+            row.forEach((cell,j)=>{
+              let td = document.createElement('td');
+              td.innerText = cell;
+              if(headers[j]==='Splňuje') td.className = (cell.toLowerCase()==='failed')?'failed':'ok';
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          }
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    function downloadPDF(){
+      const element = document.getElementById('report');
+      html2pdf().set({margin:0.5, filename:'vysledky.pdf', html2canvas:{scale:2}}).from(element).save();
+    }
+  </script>
+</body>
+</html>
